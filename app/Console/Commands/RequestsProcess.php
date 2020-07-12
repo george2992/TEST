@@ -16,7 +16,7 @@ class RequestsProcess extends Command
      *
      * @var string
      */
-    protected $signature = 'requets:process {requests=10}';
+    protected $signature = 'requets:process {requests=100000}';
     protected $groupRepository;
     protected $recordRepository;
 
