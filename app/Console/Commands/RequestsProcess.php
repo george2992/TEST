@@ -8,6 +8,7 @@ use App\Jobs\RequestJob;
 use Illuminate\Console\Command;
 use App\Repositories\RequestsRecordRepository;
 use App\Repositories\RequestsGroupRepository;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class RequestsProcess extends Command
 {
@@ -59,13 +60,28 @@ class RequestsProcess extends Command
 
         $group = $this->groupRepository->store($data);
 
+        ProgressBar::setFormatDefinition('progress', '%message% %current%/%max% <info>%num%</info>');
+        $progress = new ProgressBar($this->getOutput());
+        $progress->setFormat('progress');
+        $progress->setMessage('Calculado...');
+        $progress->start($requests);
+        
         do {
+            $progress->setMessage($requests, 'num');
+            $progress->advance(1);
+
             $record = $this->recordRepository->store($group, $data);
 
             $job = (new RequestJob($record));
             dispatch($job);
 
             $requests--;
+            $progress->advance(0);
         } while ($requests > 0);
+
+        $progress->setMessage('Terminado');
+        $progress->setMessage('', 'num');
+        $progress->finish();
+        $this->line('');
     }
 }
