@@ -19,6 +19,7 @@ class CreateTableRequestsRecord extends Migration
             $table->text('input');
             $table->text('trace');
             $table->char('http_status', 3)->nullable()->index();
+            $table->integer('attempts')->default(0);
 
             $table->timestamps();
         });
