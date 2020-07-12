@@ -40,10 +40,26 @@ class RequestJob extends Job implements ShouldQueue
         $result = $response->getBody();
         $statusCode = $response->getStatusCode();
 
+
+        $attempts = 0;
+        while ($attempts <= 5) {
+
+            if ($statusCode == 200 || $statusCode == 201) {
+                break;
+            }
+
+            $attempts++;
+
+            if ($attempts < 5) {
+                sleep(1);
+            }
+        }
+
         $data = [
             'input' => $data,
             'trace' => $result,
-            'http_status' => $statusCode
+            'http_status' => $statusCode,
+            'attempts' => $attempts
         ];
 
         $recordRepository->update($this->requestRecord, $data);
