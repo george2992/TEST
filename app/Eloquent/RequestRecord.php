@@ -12,7 +12,8 @@ class RequestRecord extends Model
     protected $fillable = [
     	'input',
     	'trace',
-        'http_status'
+        'http_status',
+        'attempts'
     ];
 
     protected static function boot()
